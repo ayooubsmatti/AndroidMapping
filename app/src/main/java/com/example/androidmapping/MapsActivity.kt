@@ -1,7 +1,11 @@
 package com.example.androidmapping
 
+import android.content.pm.PackageManager
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
+import androidx.core.app.ActivityCompat
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -23,6 +27,45 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+
+        checkPermissions()
+    }
+
+    var accessLocation = 123456
+    fun checkPermissions(){
+
+        if (Build.VERSION.SDK_INT >= 23){
+            if (ActivityCompat.checkSelfPermission(this,android.Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED)
+            {
+                requestPermissions(arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),accessLocation)
+                return
+            }
+
+        }
+
+        getUserLocation()
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        when(requestCode){
+            accessLocation->{
+                if (grantResults[0]==PackageManager.PERMISSION_GRANTED){
+                    getUserLocation()
+                }
+            }else->{
+                 Toast.makeText(this, "Location access deny", Toast.LENGTH_LONG).show()
+              }
+             }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+
+     fun getUserLocation(){
+        Toast.makeText(this,"Location access now",Toast.LENGTH_LONG).show()
+         //TODO: User Access Location
     }
 
     /**
